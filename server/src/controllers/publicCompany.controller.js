@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Company from "../models/company.model.js";
-import ApiError from "../utils/apiError.js";
+import ApiError from "../utils/ApiError.js";
 
 export const getPublicCompanies = async(req, res, next) => {
   try {
