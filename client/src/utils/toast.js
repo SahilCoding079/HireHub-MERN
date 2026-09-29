@@ -1,0 +1,25 @@
+import toast from "react-hot-toast";
+
+const showToast = {
+  success: (message) => {
+    toast.success(message);
+  },
+
+  error: (message) => {
+    toast.error(message);
+  },
+
+  loading: (message) => {
+    return toast.loading(message);
+  },
+
+  dismiss: (toastId) => {
+    toast.dismiss(toastId);
+  },
+
+  promise: (promise, messages) => {
+    return toast.promise(promise, messages);
+  },
+};
+
+export default showToast;

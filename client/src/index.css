@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+:root {
+	color-scheme: light;
+	scrollbar-color: #1f7a50 #e5ebe5;
+	scrollbar-width: thin;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+html,
+body,
+#root {
+	min-width: 320px;
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	background: #f1f5ed;
+	overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+	display: block;
+	max-width: 100%;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+	-webkit-tap-highlight-color: transparent;
+}
+
+* {
+	scrollbar-color: #1f7a50 #e5ebe5;
+	scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: #e5ebe5;
+}
+
+::-webkit-scrollbar-thumb {
+	border: 2px solid #e5ebe5;
+	border-radius: 999px;
+	background: #1f7a50;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #185e3e;
+}
+
+@keyframes route-enter {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+
+	100% {
+		background-position: -200% 0;
+	}
+}
+
+.shimmer-block {
+	background: linear-gradient(90deg, #dfe9e1 25%, #f7faf7 50%, #dfe9e1 75%);
+	background-size: 200% 100%;
+	animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.route-transition {
+	animation: route-enter 280ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	.route-transition {
+		animation: none;
+	}
+
+	.shimmer-block {
+		animation: none;
+	}
+}
