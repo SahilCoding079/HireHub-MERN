@@ -14,6 +14,7 @@ import userRouter from "./routes/user.routes.js";
 import savedJobRouter from "./routes/savedJob.routes.js";
 import notificationRouter from "./routes/notification.routes.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
+import connectDb from "./config/db.js";
 
 const app = express();
 
@@ -27,6 +28,15 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDb();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
