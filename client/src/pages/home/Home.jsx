@@ -265,8 +265,8 @@ const Home = () => {
             {jobs.map((job) => (
               <StaggerItem key={job._id}>
                 <article className="group h-full rounded-2xl border border-[#e2e7e1] bg-white p-5 shadow-[0_8px_22px_rgba(46,74,57,0.035)] transition duration-300 hover:-translate-y-1 hover:border-[#b8d4c2] hover:shadow-[0_18px_35px_rgba(46,74,57,0.1)]">
-                  <div className="flex items-start justify-between gap-4">
-                    <Link to={`/jobs/${job._id}`} className="flex min-w-0 flex-1 gap-3">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <Link to={`/jobs/${job._id}`} className="flex min-w-0 flex-1 basis-full gap-3 sm:basis-auto">
                       {job.company?.logo ? (
                         <img
                           src={job.company.logo}
@@ -287,8 +287,8 @@ const Home = () => {
                         </p>
                       </div>
                     </Link>
-                    <div className="flex shrink-0 items-center gap-2">
-                      <FiArrowUpRight className="text-[#238457] transition group-hover:-translate-y-1 group-hover:translate-x-1" />
+                    <div className="ml-auto flex shrink-0 items-center gap-2">
+                      <FiArrowUpRight className="shrink-0 text-[#238457] transition group-hover:-translate-y-1 group-hover:translate-x-1" />
                       <SaveJobButton jobId={job._id} />
                     </div>
                   </div>

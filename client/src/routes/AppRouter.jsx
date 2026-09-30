@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useLayoutEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import MainLayout from "../components/layout/MainLayout";
 import Loader from "../components/common/Loader";
@@ -38,6 +38,10 @@ const RecruiterApplicantDetail = lazy(
 
 const AppRouter = () => {
   const location = useLocation();
+
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location.pathname]);
 
   return (
     <div key={location.pathname} className="route-transition">
