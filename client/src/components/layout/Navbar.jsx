@@ -9,16 +9,27 @@ import { logout } from "../../redux/slices/authSlice";
 import { logoutUser } from "../../service/auth.service";
 
 const Navbar = () => {
-  const links = [
-    { name: "Home", path: "/" },
-    { name: "Find jobs", path: "/jobs" },
-    { name: "About", path: "/about" },
-  ];
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuthenticated, isInitialized, user } = useSelector((state) => state.auth);
   const showLogout = isInitialized && isAuthenticated && Boolean(user);
+
+  const publicLinks = [
+    { name: "Home", path: "/" },
+    { name: "Find jobs", path: "/jobs" },
+    { name: "About", path: "/about" },
+  ];
+  const memberLinks = [
+    { name: "Home", path: "/" },
+    { name: "Find jobs", path: "/jobs" },
+    { name: "Dashboard", path: "/dashboard" },
+    { name: "My applications", path: "/my-applications" },
+    { name: "Saved jobs", path: "/saved-jobs" },
+    { name: "My profile", path: "/user-profile" },
+  ];
+
+  const links = showLogout ? memberLinks : publicLinks;
 
   const handleLogout = async () => {
     await logoutUser().catch(() => undefined);
