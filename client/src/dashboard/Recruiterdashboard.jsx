@@ -39,10 +39,9 @@ const Recruiterdashboard = () => {
         const response = await getRecruiterService();
         dispatch(recruiterDashboardSuccess(response.data));
       } catch (error) {
-        dispatch(
-          recruiterDashboardFailure(error.response?.data?.message) ||
-            "Failed to load dashboard.",
-        );
+        const message =
+          error.response?.data?.message || "Failed to load dashboard.";
+        dispatch(recruiterDashboardFailure(message));
       }
     };
     fetchRecruiterDashboard();

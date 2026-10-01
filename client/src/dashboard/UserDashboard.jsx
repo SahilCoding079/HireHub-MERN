@@ -62,11 +62,13 @@ const UserDashboard = () => {
   if (!dashboard) return null;
 
   const profileFields = [
-    user?.fullName,
-    user?.email,
-    user?.bio,
-    user?.resume,
-    user?.skills?.length,
+    Boolean(user?.fullName?.trim()),
+    Boolean(user?.email?.trim()),
+    Boolean(user?.phone?.trim()),
+    Boolean(user?.bio?.trim()),
+    Boolean(user?.profilePhoto?.trim()),
+    Boolean(user?.resume?.trim()),
+    Boolean(user?.skills?.some((skill) => skill.trim())),
   ];
   const profileProgress = Math.round(
     (profileFields.filter(Boolean).length / profileFields.length) * 100,
@@ -203,7 +205,7 @@ const UserDashboard = () => {
                 you different.
               </p>
               <a
-                href="/profile"
+                href="/user-profile"
                 className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#1f7a50] hover:text-[#185e3e]"
               >
                 Complete profile <FiArrowUpRight />

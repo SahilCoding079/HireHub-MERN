@@ -50,7 +50,9 @@ const Login = () => {
         { replace: true },
       );
     } catch (error) {
-      showToast.error(error.response?.message || error.message);
+      showToast.error(
+        error.response?.data?.message || error.message || "Unable to log in.",
+      );
       dispatch(loginFailure());
     }
     reset();

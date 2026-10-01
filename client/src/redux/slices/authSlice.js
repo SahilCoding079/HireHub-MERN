@@ -28,7 +28,7 @@ const authSlice = createSlice({
       state.isLoading = false;
       state.user = null;
       state.isAuthenticated = false;
-      state.isInitialized = false;
+      state.isInitialized = true;
     },
     logout: (state) => {
       state.isLoading = false;
@@ -37,8 +37,9 @@ const authSlice = createSlice({
       state.isInitialized = true;
     },
     setUser: (state, action) => {
-      state.user = action.payload,
-      state.isAuthenticated = true
+      state.user = action.payload;
+      state.isAuthenticated = true;
+      state.isInitialized = true;
     },
     initializeAuthStart: (state) => {
       state.isLoading = true

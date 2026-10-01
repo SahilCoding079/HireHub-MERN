@@ -1,4 +1,6 @@
 import axios from "axios";
+import store from "../redux/store.js";
+import { logout } from "../redux/slices/authSlice.js";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -33,6 +35,9 @@ api.interceptors.response.use(
       await refreshPromise;
       return api(originalRequest);
     } catch (refreshError) {
+      if (refreshError.response?.status === 401) {
+        store.dispatch(logout());
+      }
       return Promise.reject(refreshError);
     }
   },

@@ -4,10 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import {
+  FiArrowLeft,
   FiCamera,
   FiCheck,
   FiEdit2,
   FiFileText,
+  FiLoader,
   FiMail,
   FiPhone,
   FiPlus,
@@ -35,6 +37,7 @@ import {
   updateProfileStart,
   updateProfileSuccess,
 } from "../../redux/slices/profileSlice";
+import { setUser } from "../../redux/slices/authSlice";
 import {
   deleteProfilePhoto,
   deleteResume,
@@ -54,6 +57,7 @@ const getData = (response) => response?.data ?? response;
 
 const UserProfile = () => {
   const dispatch = useDispatch();
+  const authUser = useSelector((state) => state.auth.user);
   const {
     profile,
     isLoading,
@@ -83,6 +87,11 @@ const UserProfile = () => {
     defaultValues: initialForm,
   });
   const navigate = useNavigate();
+  const syncAuthenticatedUser = (updatedUser) => {
+    if (updatedUser) {
+      dispatch(setUser({ ...authUser, ...updatedUser }));
+    }
+  };
   useEffect(() => {
     const fetchProfile = async () => {
       dispatch(profileStart());
@@ -118,11 +127,11 @@ const UserProfile = () => {
         .split(",")
         .map((skill) => skill.trim())
         .filter(Boolean);
-      dispatch(
-        updateProfileSuccess(
-          getData(await updateProfile({ ...values, skills })),
-        ),
+      const updatedProfile = getData(
+        await updateProfile({ ...values, skills }),
       );
+      dispatch(updateProfileSuccess(updatedProfile));
+      syncAuthenticatedUser(updatedProfile);
       setIsEditing(false);
       showToast.success("Profile details updated");
     } catch (saveError) {
@@ -152,7 +161,9 @@ const UserProfile = () => {
     try {
       const data = new FormData();
       data.append("profilePhoto", file);
-      dispatch(profilePhotoSuccess(getData(await updateProfilePhoto(data))));
+      const updatedProfile = getData(await updateProfilePhoto(data));
+      dispatch(profilePhotoSuccess(updatedProfile));
+      syncAuthenticatedUser(updatedProfile);
       showToast.success("Profile photo updated");
     } catch (photoError) {
       dispatch(
@@ -169,7 +180,9 @@ const UserProfile = () => {
   const removePhoto = async () => {
     dispatch(deletePhotoStart());
     try {
-      dispatch(deletePhotoSuccess(getData(await deleteProfilePhoto())));
+      const updatedProfile = getData(await deleteProfilePhoto());
+      dispatch(deletePhotoSuccess(updatedProfile));
+      syncAuthenticatedUser(updatedProfile);
       showToast.success("Profile photo removed");
     } catch (photoError) {
       dispatch(
@@ -195,7 +208,9 @@ const UserProfile = () => {
     try {
       const data = new FormData();
       data.append("resume", file);
-      dispatch(resumeUploadSuccess(getData(await uploadResume(data))));
+      const updatedProfile = getData(await uploadResume(data));
+      dispatch(resumeUploadSuccess(updatedProfile));
+      syncAuthenticatedUser(updatedProfile);
       showToast.success("Resume uploaded");
     } catch (resumeError) {
       dispatch(
@@ -213,13 +228,13 @@ const UserProfile = () => {
     dispatch(deleteResumeStart());
     try {
       await deleteResume();
-      dispatch(
-        deleteResumeSuccess({
-          resume: "",
-          resumeOriginalName: "",
-          resumePublicId: "",
-        }),
-      );
+      const updatedProfile = {
+        resume: "",
+        resumeOriginalName: "",
+        resumePublicId: "",
+      };
+      dispatch(deleteResumeSuccess(updatedProfile));
+      syncAuthenticatedUser(updatedProfile);
       showToast.success("Resume removed");
     } catch (resumeError) {
       dispatch(
@@ -241,8 +256,6 @@ const UserProfile = () => {
         <Link to="/login"/>
       </main>
     );
-    if(isUploadingPhoto)
-      return <Loader/>
   const skills = profile.skills || [];
   return (
     <main className="min-h-screen overflow-hidden bg-[#f8f7f3] px-5 py-8 text-[#19221d] sm:px-8 lg:px-10 lg:py-12">
@@ -264,14 +277,22 @@ const UserProfile = () => {
               Keep your details current so the right opportunities can find you.
             </p>
           </div>
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            type="button"
-            onClick={toggleEditor}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#1f7a50] px-4 text-sm font-bold text-white shadow-[0_10px_20px_rgba(31,122,80,0.18)] transition hover:bg-[#185e3e]"
-          >
-            <FiEdit2 /> {isEditing ? "Close editor" : "Edit profile"}
-          </motion.button>
+          <div className="flex flex-wrap items-center gap-3 self-start sm:self-auto">
+            <Link
+              to="/dashboard"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-[#b8d4c2] px-4 text-sm font-bold text-[#16734f] transition hover:bg-[#f0f8f1]"
+            >
+              <FiArrowLeft /> Back to dashboard
+            </Link>
+            <motion.button
+              whileTap={{ scale: 0.97 }}
+              type="button"
+              onClick={toggleEditor}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#1f7a50] px-4 text-sm font-bold text-white shadow-[0_10px_20px_rgba(31,122,80,0.18)] transition hover:bg-[#185e3e]"
+            >
+              <FiEdit2 /> {isEditing ? "Close editor" : "Edit profile"}
+            </motion.button>
+          </div>
         </motion.header>
 
         <motion.section
@@ -297,11 +318,22 @@ const UserProfile = () => {
                     type="button"
                     title="Change profile photo"
                     aria-label="Change profile photo"
+                    disabled={isBusy}
                     onClick={() => photoInputRef.current?.click()}
-                    className="absolute inset-x-0 bottom-0 flex h-9 items-center justify-center bg-[#19221d]/75 text-white opacity-0 transition group-hover:opacity-100 focus:opacity-100"
+                    className="absolute inset-x-0 bottom-0 flex h-9 items-center justify-center bg-[#19221d]/75 text-white opacity-0 transition group-hover:opacity-100 focus:opacity-100 disabled:cursor-not-allowed"
                   >
                     <FiCamera />
                   </button>
+                  {isUploadingPhoto && (
+                    <div
+                      className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-white/85 text-xs font-bold text-[#16734f]"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      <FiLoader className="animate-spin text-lg" />
+                      Uploading photo
+                    </div>
+                  )}
                 </div>
                 <div>
                   <span className="inline-flex rounded-full bg-[#e5f3eb] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#16734f]">
@@ -339,7 +371,15 @@ const UserProfile = () => {
                   onClick={() => photoInputRef.current?.click()}
                   className="inline-flex h-10 items-center gap-2 rounded-xl border border-[#b8d4c2] px-3 text-xs font-bold text-[#16734f] hover:bg-[#f0f8f1] disabled:opacity-50"
                 >
-                  <FiUpload /> Photo
+                  {isUploadingPhoto ? (
+                    <>
+                      <FiLoader className="animate-spin" /> Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <FiUpload /> Photo
+                    </>
+                  )}
                 </button>
               </div>
             </div>

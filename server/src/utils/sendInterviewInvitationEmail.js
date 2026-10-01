@@ -1,15 +1,7 @@
-import nodemailer from "nodemailer";
+import createSmtpTransporter from "./createSmtpTransporter.js";
 
 const sendInterviewInvitationEmail = async ({ email, jobTitle, companyName, dateLabel, durationMinutes, mode, meetingLink, location, notes, html }) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
-    },
-  });
+  const transporter = createSmtpTransporter();
 
   const locationDetails = mode === "online"
     ? `Join the interview: ${meetingLink}`
