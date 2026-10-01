@@ -22,10 +22,10 @@ const Footer = () => {
             </p>
             <div className="mt-6 flex items-center gap-2">
               {[
-                ["LinkedIn", "https://www.linkedin.com/", FiLinkedin],
-                ["Instagram", "https://www.instagram.com/", FiInstagram],
-                ["X", "https://x.com/", FiTwitter],
-                ["GitHub", "https://github.com/", FiGithub],
+                ["LinkedIn", "https://www.linkedin.com/in/sahil-sinha-067093354/", FiLinkedin],
+                ["Instagram", "https://www.instagram.com/sahil_sinha079?stkn=eHFqbWthZmZkNTdy", FiInstagram],
+                ["X", "https://x.com/SahilSinha1505", FiTwitter],
+                ["GitHub", "https://github.com/SahilCoding079", FiGithub],
               ].map(([label, href, Icon]) => (
                 <a
                   key={label}
@@ -46,9 +46,8 @@ const Footer = () => {
               Explore
             </h2>
             <nav className="mt-5 flex flex-col items-start gap-3 text-sm text-[#c3d2c7]">
-              <Link className="transition hover:text-white" to="/find-job">Find jobs</Link>
+              <Link className="transition hover:text-white" to="/jobs">Find jobs</Link>
               <Link className="transition hover:text-white" to="/about">About us</Link>
-              <Link className="transition hover:text-white" to="/contact">Contact</Link>
             </nav>
           </div>
 
