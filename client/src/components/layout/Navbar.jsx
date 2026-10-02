@@ -12,7 +12,9 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated, isInitialized, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, isInitialized, user } = useSelector(
+    (state) => state.auth,
+  );
   const showLogout = isInitialized && isAuthenticated && Boolean(user);
 
   const publicLinks = [
@@ -44,11 +46,29 @@ const Navbar = () => {
         <NavLink to="/" className="group shrink-0" aria-label="HireHub home">
           <span className="flex flex-col items-start gap-1">
             <HireHubLogo className="transition-transform duration-300 group-hover:-translate-y-0.5" />
-            <span className="ml-0.5 flex h-1.5 w-18 items-center gap-1 overflow-hidden" aria-hidden="true">
+            <span
+              className="ml-0.5 flex h-1.5 w-18 items-center gap-1 overflow-hidden"
+              aria-hidden="true"
+            >
               {[
-                { color: "bg-[#1f7a50]", width: "w-8", scale: "group-hover:scale-x-100 group-focus-visible:scale-x-100" },
-                { color: "bg-[#f0b866]", width: "w-5", scale: "group-hover:scale-x-[1.3] group-focus-visible:scale-x-[1.3]" },
-                { color: "bg-[#9bc9a9]", width: "w-3", scale: "group-hover:scale-x-[1.6] group-focus-visible:scale-x-[1.6]" },
+                {
+                  color: "bg-[#1f7a50]",
+                  width: "w-8",
+                  scale:
+                    "group-hover:scale-x-100 group-focus-visible:scale-x-100",
+                },
+                {
+                  color: "bg-[#f0b866]",
+                  width: "w-5",
+                  scale:
+                    "group-hover:scale-x-[1.3] group-focus-visible:scale-x-[1.3]",
+                },
+                {
+                  color: "bg-[#9bc9a9]",
+                  width: "w-3",
+                  scale:
+                    "group-hover:scale-x-[1.6] group-focus-visible:scale-x-[1.6]",
+                },
               ].map((line) => (
                 <span
                   key={line.color}
@@ -89,7 +109,12 @@ const Navbar = () => {
           </ul>
 
           <div className="flex flex-col gap-3 md:flex-row md:items-center">
-            {showLogout ? (
+            {!isInitialized ? (
+              <div
+                className="h-11 w-32 animate-pulse rounded-xl bg-[#dfe8e1]"
+                aria-hidden="true"
+              />
+            ) : showLogout ? (
               <button
                 type="button"
                 onClick={handleLogout}
@@ -98,7 +123,10 @@ const Navbar = () => {
                 Logout <FiLogOut size={16} />
               </button>
             ) : (
-              <Link to="/login" className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1f7a50] px-4 py-2.5 text-sm font-bold text-white transition duration-200 hover:bg-[#185e3e] hover:shadow-[0_5px_12px_rgba(31,122,80,0.2)] focus:outline-none focus:ring-2 focus:ring-[#1f7a50] focus:ring-offset-2 md:text-base">
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1f7a50] px-4 py-2.5 text-sm font-bold text-white transition duration-200 hover:bg-[#185e3e] hover:shadow-[0_5px_12px_rgba(31,122,80,0.2)] focus:outline-none focus:ring-2 focus:ring-[#1f7a50] focus:ring-offset-2 md:text-base"
+              >
                 Get started <FiArrowUpRight size={16} />
               </Link>
             )}
@@ -107,7 +135,7 @@ const Navbar = () => {
       </div>
 
       <div
-          className={`overflow-hidden border-t border-[#dfe5df] bg-[#f8f7f3] transition-[max-height,opacity] duration-300 md:hidden ${
+        className={`overflow-hidden border-t border-[#dfe5df] bg-[#f8f7f3] transition-[max-height,opacity] duration-300 md:hidden ${
           isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
@@ -131,7 +159,12 @@ const Navbar = () => {
           </ul>
 
           <div className="flex flex-col gap-3 border-t border-[#dfe5df] pt-4 sm:flex-row">
-            {showLogout ? (
+            {!isInitialized ? (
+              <div
+                className="h-11 w-full animate-pulse rounded-xl bg-[#dfe8e1]"
+                aria-hidden="true"
+              />
+            ) : showLogout ? (
               <button
                 type="button"
                 onClick={handleLogout}
@@ -141,10 +174,19 @@ const Navbar = () => {
               </button>
             ) : (
               <>
-                <Link to="/login" onClick={() => setIsOpen(false)} className="inline-flex w-full items-center justify-center rounded-xl border border-[#b8d4c2] bg-white px-4 py-3 text-sm font-bold text-[#1f7a50] transition hover:border-[#1f7a50] sm:text-base">
+                <Link
+                  to="/login"
+                  onClick={() => setIsOpen(false)}
+                  className="inline-flex w-full items-center justify-center rounded-xl border border-[#b8d4c2] bg-white px-4 py-3 text-sm font-bold text-[#1f7a50] transition hover:border-[#1f7a50] sm:text-base"
+                >
                   Login
                 </Link>
-                <Link to="/register" onClick={() => setIsOpen(false)} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1f7a50] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#185e3e] sm:text-base">
+
+                <Link
+                  to="/register"
+                  onClick={() => setIsOpen(false)}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#1f7a50] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#185e3e] sm:text-base"
+                >
                   Get started <FiArrowUpRight size={17} />
                 </Link>
               </>
