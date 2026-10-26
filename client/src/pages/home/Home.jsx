@@ -28,7 +28,7 @@ import {
   publicCompaniesStart,
   publicCompaniesSuccess,
 } from "../../redux/slices/publicCompaniesSlice";
-import showToast from "../../utils/toast";
+// import showToast from "../../utils/toast";
 import SaveJobButton from "../../components/common/SaveJobButton";
 
 const formatSalary = (salary) =>
@@ -37,7 +37,7 @@ const formatSalary = (salary) =>
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const { jobs, pagination, isLoading: jobsLoading, error: jobsError } = useSelector(
     (state) => state.job,
   );
@@ -85,11 +85,11 @@ const Home = () => {
     if (location.trim()) searchParams.set("location", location.trim());
     const jobsPath = `/jobs${searchParams.toString() ? `?${searchParams}` : ""}`;
 
-    if (!isAuthenticated) {
-      showToast.error("Please log in to search for jobs.");
-      navigate("/login", { state: { from: jobsPath } });
-      return;
-    }
+    // if (!isAuthenticated) {
+    //   showToast.error("Please log in to search for jobs.");
+    //   navigate("/login", { state: { from: jobsPath } });
+    //   return;
+    // }
 
     navigate(jobsPath);
   };
