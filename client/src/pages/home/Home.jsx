@@ -30,6 +30,7 @@ import {
 } from "../../redux/slices/publicCompaniesSlice";
 // import showToast from "../../utils/toast";
 import SaveJobButton from "../../components/common/SaveJobButton";
+import JobSearchAutocomplete from "../../components/common/JobSearchAutocomplete";
 
 const formatSalary = (salary) =>
   salary ? `₹${Number(salary).toLocaleString("en-IN")}` : "Salary not listed";
@@ -38,9 +39,12 @@ const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  const { jobs, pagination, isLoading: jobsLoading, error: jobsError } = useSelector(
-    (state) => state.job,
-  );
+  const {
+    jobs,
+    pagination,
+    isLoading: jobsLoading,
+    error: jobsError,
+  } = useSelector((state) => state.job);
   const {
     companies,
     isLoading: companiesLoading,
@@ -124,23 +128,28 @@ const Home = () => {
             >
               <label className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2">
                 <FiSearch className="shrink-0 text-green-700" size={20} />
-                <input
-                  aria-label="Search jobs"
+                <JobSearchAutocomplete
+                  mode="keyword"
                   value={keyword}
-                  onChange={(event) => setKeyword(event.target.value)}
+                  location={location}
+                  onChange={setKeyword}
                   placeholder="Job title, skill or company"
-                  className="w-full bg-transparent text-sm text-[#19221d] outline-none placeholder:text-[#8a958e]"
+                  ariaLabel="Search by keyword"
+                  className="flex-1"
+                  inputClassName="w-full bg-transparent text-sm outline-none placeholder:text-[#8a958e]"
                 />
               </label>
               <div className="hidden h-8 w-px bg-[#e3e8e3] sm:block" />
               <label className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2">
                 <FiMapPin className="shrink-0 text-green-700" size={20} />
-                <input
-                  aria-label="Search location"
+                <JobSearchAutocomplete
+                  mode="location"
                   value={location}
-                  onChange={(event) => setLocation(event.target.value)}
-                  placeholder="Anywhere"
-                  className="w-full bg-transparent text-sm text-[#19221d] outline-none placeholder:text-[#8a958e]"
+                  onChange={setLocation}
+                  placeholder="Location or remote"
+                  ariaLabel="Search by location"
+                  className="flex-1"
+                  inputClassName="w-full bg-transparent text-sm outline-none placeholder:text-[#8a958e]"
                 />
               </label>
               <button
@@ -152,7 +161,9 @@ const Home = () => {
             </motion.form>
             {jobs.length > 0 && (
               <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-[#69766e]">
-                <span className="font-semibold text-[#53615a]">Recently listed:</span>
+                <span className="font-semibold text-[#53615a]">
+                  Recently listed:
+                </span>
                 {jobs.slice(0, 3).map((job) => (
                   <Link
                     key={job._id}
@@ -199,7 +210,10 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-24" id="opportunities">
+      <section
+        className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:px-10 lg:py-24"
+        id="opportunities"
+      >
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <FadeIn>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#238457]">
@@ -246,7 +260,8 @@ const Home = () => {
               </div>
             </div>
             <span className="inline-flex shrink-0 items-center gap-2 text-sm font-bold text-[#1f7a50]">
-              View opportunity <FiArrowUpRight className="transition group-hover:translate-x-1 group-hover:-translate-y-1" />
+              View opportunity{" "}
+              <FiArrowUpRight className="transition group-hover:translate-x-1 group-hover:-translate-y-1" />
             </span>
           </Link>
         )}
@@ -266,7 +281,10 @@ const Home = () => {
               <StaggerItem key={job._id}>
                 <article className="group h-full rounded-2xl border border-[#e2e7e1] bg-white p-5 shadow-[0_8px_22px_rgba(46,74,57,0.035)] transition duration-300 hover:-translate-y-1 hover:border-[#b8d4c2] hover:shadow-[0_18px_35px_rgba(46,74,57,0.1)]">
                   <div className="flex flex-wrap items-start justify-between gap-4">
-                    <Link to={`/jobs/${job._id}`} className="flex min-w-0 flex-1 basis-full gap-3 sm:basis-auto">
+                    <Link
+                      to={`/jobs/${job._id}`}
+                      className="flex min-w-0 flex-1 basis-full gap-3 sm:basis-auto"
+                    >
                       {job.company?.logo ? (
                         <img
                           src={job.company.logo}
@@ -312,26 +330,36 @@ const Home = () => {
       </section>
 
       {companies.length > 0 && (
-        <section className="border-y border-[#dfe5df] bg-[#e8f0e8]" id="companies">
-        <div className="mx-auto flex max-w-7xl flex-col gap-7 px-5 py-10 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
-          <p className="text-sm font-semibold text-[#69766e]">
-            Companies hiring on HireHub
-          </p>
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-            {companies.slice(0, 6).map((company) => (
-              <div key={company._id} className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2 text-sm font-bold text-[#748279]">
-                {company.logo ? (
-                  <img src={company.logo} alt="" className="h-7 w-7 rounded-lg object-contain" />
-                ) : (
-                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#e5f3eb] text-xs text-[#1f7a50]">
-                    {company.name?.charAt(0)?.toUpperCase()}
-                  </span>
-                )}
-                {company.name}
-              </div>
-            ))}
+        <section
+          className="border-y border-[#dfe5df] bg-[#e8f0e8]"
+          id="companies"
+        >
+          <div className="mx-auto flex max-w-7xl flex-col gap-7 px-5 py-10 sm:px-8 lg:flex-row lg:items-center lg:justify-between lg:px-10">
+            <p className="text-sm font-semibold text-[#69766e]">
+              Companies hiring on HireHub
+            </p>
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+              {companies.slice(0, 6).map((company) => (
+                <div
+                  key={company._id}
+                  className="flex items-center gap-2 rounded-xl bg-white/70 px-3 py-2 text-sm font-bold text-[#748279]"
+                >
+                  {company.logo ? (
+                    <img
+                      src={company.logo}
+                      alt=""
+                      className="h-7 w-7 rounded-lg object-contain"
+                    />
+                  ) : (
+                    <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#e5f3eb] text-xs text-[#1f7a50]">
+                      {company.name?.charAt(0)?.toUpperCase()}
+                    </span>
+                  )}
+                  {company.name}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
         </section>
       )}
 

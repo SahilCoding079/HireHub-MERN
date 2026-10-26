@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   FiArrowLeft,
@@ -22,6 +21,8 @@ import {
   StaggerItem,
 } from "../../components/motion/Motion";
 import SaveJobButton from "../../components/common/SaveJobButton";
+import JobSearchAutocomplete from "../../components/common/JobSearchAutocomplete";
+
 
 const filters = [
   {
@@ -41,18 +42,14 @@ const formatSalary = (salary) =>
 
 const Jobs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [keyword, setKeyword] = useState(
-    searchParams.get("keyword") || ""
-  );
-  const [location, setLocation] = useState(
-    searchParams.get("location") || ""
-  );
+  const [keyword, setKeyword] = useState(searchParams.get("keyword") || "");
+  const [location, setLocation] = useState(searchParams.get("location") || "");
   const [retryToken, setRetryToken] = useState(0);
 
   const dispatch = useDispatch();
 
   const { jobs, pagination, isLoading, error } = useSelector(
-    (state) => state.job
+    (state) => state.job,
   );
 
   useEffect(() => {
@@ -63,7 +60,7 @@ const Jobs = () => {
         const params = Object.fromEntries(searchParams.entries());
 
         const hasSearchFilters = Object.keys(params).some(
-          (key) => !["page", "limit"].includes(key)
+          (key) => !["page", "limit"].includes(key),
         );
 
         const response = hasSearchFilters
@@ -82,8 +79,8 @@ const Jobs = () => {
         dispatch(
           jobListFailure(
             requestError.response?.data?.message ||
-              "Unable to load jobs right now."
-          )
+              "Unable to load jobs right now.",
+          ),
         );
       }
     };
@@ -178,23 +175,28 @@ const Jobs = () => {
         >
           <label className="flex min-w-0 flex-1 items-center gap-3 px-3 py-2">
             <FiSearch className="shrink-0 text-[#1f7a50]" size={20} />
-            <input
+            <JobSearchAutocomplete
+              mode="keyword"
               value={keyword}
-              onChange={(event) => setKeyword(event.target.value)}
-              aria-label="Search by keyword"
+              location={location}
+              onChange={setKeyword}
               placeholder="Job title, skill or company"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-[#8a958e]"
+              ariaLabel="Search by keyword"
+              className="flex-1"
+              inputClassName="w-full bg-transparent text-sm outline-none placeholder:text-[#8a958e]"
             />
           </label>
 
           <label className="flex min-w-0 flex-1 items-center gap-3 border-[#edf0ec] px-3 py-2 md:border-l">
             <FiMapPin className="shrink-0 text-[#1f7a50]" size={20} />
-            <input
+            <JobSearchAutocomplete
+              mode="location"
               value={location}
-              onChange={(event) => setLocation(event.target.value)}
-              aria-label="Search by location"
+              onChange={setLocation}
               placeholder="Location or remote"
-              className="w-full bg-transparent text-sm outline-none placeholder:text-[#8a958e]"
+              ariaLabel="Search by location"
+              className="flex-1"
+              inputClassName="w-full bg-transparent text-sm outline-none placeholder:text-[#8a958e]"
             />
           </label>
 
@@ -322,11 +324,17 @@ const Jobs = () => {
                 <FiBriefcase className="mx-auto text-[#1f7a50]" size={28} />
 
                 <h2 className="mt-4 font-serif text-3xl">
-                  No roles match yet
+                  {searchParams.get("keyword") && searchParams.get("location")
+                    ? `No ${searchParams.get("keyword")} jobs found in ${searchParams.get("location")}.`
+                    : searchParams.get("location")
+                      ? `No jobs found in ${searchParams.get("location")}.`
+                      : searchParams.get("keyword")
+                        ? `No jobs found for ${searchParams.get("keyword")}.`
+                        : "No roles match yet"}
                 </h2>
 
                 <p className="mt-2 text-sm text-[#69766e]">
-                  Try a broader search or clear your filters.
+                  Try another search or clear your filters.
                 </p>
               </div>
             )}
