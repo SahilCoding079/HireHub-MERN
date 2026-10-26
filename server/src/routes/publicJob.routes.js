@@ -4,7 +4,7 @@ import { getAllPublicJobs, getPublicJobByID, searchJobs } from "../controllers/p
 
 const publicJobRoute = express.Router();
 publicJobRoute.get("/", getAllPublicJobs);
-publicJobRoute.get("/search", verifyJwt, searchJobs);
+publicJobRoute.get("/search", searchJobs);
 publicJobRoute.get("/:id", getPublicJobByID);
 
 export default publicJobRoute;
