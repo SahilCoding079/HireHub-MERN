@@ -50,7 +50,7 @@ import Loader from "../../components/common/Loader";
 import Input from "../../components/ui/Input";
 import showToast from "../../utils/toast";
 import { ProfileSchema } from "../../validations/ProfileSchema";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const initialForm = { fullName: "", phone: "", bio: "", skills: "" };
 const getData = (response) => response?.data ?? response;
@@ -86,7 +86,6 @@ const UserProfile = () => {
     resolver: zodResolver(ProfileSchema),
     defaultValues: initialForm,
   });
-  const navigate = useNavigate();
   const syncAuthenticatedUser = (updatedUser) => {
     if (updatedUser) {
       dispatch(setUser({ ...authUser, ...updatedUser }));
@@ -143,9 +142,6 @@ const UserProfile = () => {
       showToast.error(
         saveError.response?.data?.message || "Unable to update your profile",
       );
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
     }
   };
 
@@ -249,11 +245,18 @@ const UserProfile = () => {
   };
 
   if (isLoading) return <Loader />;
-  if (error || !profile)
+  if (!profile)
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#f8f7f3] px-5 text-center text-[#53615a]">
-        We couldn&apos;t load your profile. Login again.
-        <Link to="/login"/>
+        <div>
+          <p>{error || "We couldn't load your profile."}</p>
+          <Link
+            to="/dashboard"
+            className="mt-4 inline-flex font-bold text-[#1f7a50] hover:underline"
+          >
+            Back to dashboard
+          </Link>
+        </div>
       </main>
     );
   const skills = profile.skills || [];

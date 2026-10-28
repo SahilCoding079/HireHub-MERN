@@ -5,6 +5,7 @@ import {
   FiCheckCircle,
   FiClock,
   FiTrendingUp,
+  FiUser,
   FiUsers,
 } from "react-icons/fi";
 import RecruiterDashboardSidebar from "../components/dashboard/RecruiterDashboardSidebar";
@@ -16,7 +17,14 @@ import {
   recruiterDashboardStart,
   recruiterDashboardSuccess,
 } from "../redux/slices/recruiterDashboardSlice";
+import {
+  clearProfile,
+  profileFailure,
+  profileStart,
+  profileSuccess,
+} from "../redux/slices/profileSlice";
 import { getRecruiterService } from "../service/recruiter/recruiterDashboard.service";
+import { getUserProfile } from "../service/userProfile.service";
 import StatCard from "../components/common/StateCard";
 import { Link } from "react-router-dom";
 
@@ -30,6 +38,13 @@ const Recruiterdashboard = () => {
   const user = useSelector((state) => state.auth.user);
   const { dashboardData, isLoading, error } = useSelector(
     (state) => state.recruiterDashboard,
+  );
+  const {
+    profile,
+    isLoading: isProfileLoading,
+    error: profileError,
+  } = useSelector(
+    (state) => state.profile,
   );
   const dispatch = useDispatch();
   useEffect(() => {
@@ -46,6 +61,24 @@ const Recruiterdashboard = () => {
     };
     fetchRecruiterDashboard();
   }, [dispatch]);
+  useEffect(() => {
+    const fetchProfile = async () => {
+      dispatch(clearProfile());
+      dispatch(profileStart());
+      try {
+        const response = await getUserProfile();
+        dispatch(profileSuccess(response.data));
+      } catch (profileError) {
+        dispatch(
+          profileFailure(
+            profileError.response?.data?.message ||
+              "Failed to load recruiter profile.",
+          ),
+        );
+      }
+    };
+    fetchProfile();
+  }, [dispatch]);
   if (isLoading) return <Loader />;
   if (error)
     return (
@@ -56,6 +89,17 @@ const Recruiterdashboard = () => {
   if (!dashboardData) return null;
 
   const firstName = user?.fullName?.split(" ")[0] || "there";
+  const profileFields = [
+    Boolean(profile?.fullName?.trim()),
+    Boolean(profile?.email?.trim()),
+    Boolean(profile?.phone?.trim()),
+    Boolean(profile?.bio?.trim()),
+    Boolean(profile?.profilePhoto?.trim()),
+    Boolean(profile?.skills?.some((skill) => skill.trim())),
+  ];
+  const profileCompletion = Math.round(
+    (profileFields.filter(Boolean).length / profileFields.length) * 100,
+  );
 
   return (
     <div className="flex min-h-screen bg-[#f1f5ed] text-[#19221d]">
@@ -158,32 +202,49 @@ const Recruiterdashboard = () => {
               </div>
             </FadeIn>
 
-            <FadeIn className="rounded-2xl border border-[#d7e0d8] bg-[#e8f0e8] p-5 sm:p-7">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#238457]">
-                    Hiring health
-                  </p>
-                  <h2 className="mt-2 font-serif text-3xl">76% filled</h2>
-                </div>
-                <span className="font-serif text-3xl text-[#1f7a50]">76%</span>
+            <FadeIn className="flex flex-col rounded-2xl border border-[#d7e0d8] bg-[#e8f0e8] p-5 sm:p-7">
+              <div className="flex items-start justify-between gap-3">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#1f7a50]">
+                  <FiUser size={22} />
+                </span>
+                <span className="rounded-full bg-white px-3 py-1.5 text-sm font-bold text-[#1f7a50]">
+                  {isProfileLoading || !profile ? "—" : `${profileCompletion}%`}
+                </span>
               </div>
-              <div className="mt-7 h-2 overflow-hidden rounded-full bg-[#cbdccf]">
+              <p className="mt-6 text-xs font-bold uppercase tracking-[0.16em] text-[#238457]">
+                Your profile ·{" "}
+                {isProfileLoading || !profile
+                  ? profileError
+                    ? "Completeness unavailable"
+                    : "Completeness loading"
+                  : `${profileCompletion}% complete`}
+              </p>
+              <div
+                className="mt-3 h-2 overflow-hidden rounded-full bg-[#cbdccf]"
+                role="progressbar"
+                aria-label="Recruiter profile completeness"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={profile && !isProfileLoading ? profileCompletion : 0}
+              >
                 <div
                   className="h-full rounded-full bg-[#1f7a50] transition-[width] duration-700"
-                  style={{ width: "76%" }}
+                  style={{
+                    width: `${profile && !isProfileLoading ? profileCompletion : 0}%`,
+                  }}
                 />
               </div>
-              <p className="mt-5 text-sm leading-6 text-[#69766e]">
-                Your hiring funnel is moving well. Keep the interview cadence
-                strong for priority roles.
+              <h2 className="mt-4 font-serif text-3xl">Make a great first impression.</h2>
+              <p className="mt-3 text-sm leading-6 text-[#69766e]">
+                Keep your recruiter details and specialties up to date for
+                candidates and hiring teams.
               </p>
-              <a
-                href="/recruiter/applicants"
-                className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-[#1f7a50] hover:text-[#185e3e]"
+              <Link
+                to="/recruiter-profile"
+                className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-bold text-[#1f7a50] hover:text-[#185e3e]"
               >
-                Review applicants <FiArrowUpRight />
-              </a>
+                View recruiter profile <FiArrowUpRight />
+              </Link>
             </FadeIn>
           </div>
 

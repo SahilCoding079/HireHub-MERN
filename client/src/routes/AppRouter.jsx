@@ -13,6 +13,9 @@ const Notifications = lazy(() => import("../pages/notifications/Notifications"))
 const Jobs = lazy(() => import("../pages/jobs/Jobs"));
 const JobDetails = lazy(() => import("../pages/jobs/JobDetails"));
 const UserProfile = lazy(() => import("../pages/profile/UserProfile"));
+const RecruiterProfile = lazy(
+  () => import("../pages/profile/RecruiterProfile"),
+);
 const Login = lazy(() => import("../pages/auth/Login"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const ChangePassword = lazy(() => import("../pages/auth/ChangePassword"));
@@ -76,7 +79,7 @@ const AppRouter = () => {
             <Route path="/recruiter-companies" element={<RecruiterCompanies />} />
             <Route path="/recruiter-applicants" element={<RecruiterApplicants />} />
             <Route path="/recruiter-applicants/:id" element={<RecruiterApplicantDetail />} />
-            <Route path="/recruiter-profile" element={<Recruiterdashboard />} />
+            <Route path="/recruiter-profile" element={<RecruiterProfile />} />
             <Route path="/recruiter-jobs" element={<RecruiterJobs />} />
             <Route path="/recruiter-jobs/:id/edit" element={<CreateJob />} />
             <Route path="/recruiter-job-detail/:id" element={<RecruiterJobDetail />} />

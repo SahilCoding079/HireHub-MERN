@@ -7,7 +7,7 @@ import resumeUpload from "../middleware/uploadResume.middleware.js";
 
 const userRouter = express.Router();
 userRouter.use(verifyJwt);
-userRouter.use(authorizeRoles("user"));
+userRouter.use(authorizeRoles("user", "recruiter"));
 
 userRouter.get("/profile",getUserProfile);
 userRouter.patch("/profile",updateProfile);
